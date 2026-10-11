@@ -1,0 +1,6 @@
+{
+  "name": "Energy-Aware Multi-Agent DRL for Dynamic Slicing and xApp Sleeping in O-RAN",
+  "description": "Multi-Agent Deep Reinforcement Learning for dynamic PRB slicing (eMBB, URLLC, mMTC) and xApp sleep/wake energy optimization in 5G O-RAN.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,36 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environments
+venv/
+env/
+.venv/
+ENV/
+
+# PyTorch checkpoints and training outputs
+checkpoints/
+results/
+logs/
+*.pt
+*.pth
+
+# Data exports and plots
+*.csv
+*.png
+*.pdf
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Node.js (for web interface if used)
+node_modules/
+dist/
+dist-ssr/
+*.local

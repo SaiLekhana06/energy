@@ -1,0 +1,23 @@
+# Lightweight CPU wheels repository for fast cloud deployment (avoids 2.5GB CUDA binaries on Streamlit Cloud)
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Core Web Dashboard
+streamlit>=1.30.0
+
+# Deep Reinforcement Learning & Numerical Computing
+torch>=2.0.0
+numpy>=1.24.0,<2.1.0
+scipy>=1.10.0
+gymnasium>=0.29.0
+
+# Configuration, Logging, and Data Handling
+pyyaml>=6.0
+pandas>=2.0.0
+tqdm>=4.65.0
+
+# Visualization and Plotting
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Testing and Code Quality
+pytest>=7.4.0
