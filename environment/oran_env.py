@@ -1,8 +1,26 @@
 """Gymnasium-compatible multi-agent O-RAN environment for dynamic slicing and xApp sleeping."""
 
 from typing import Any, Dict, List, Optional, Tuple
-import gymnasium as gym
-from gymnasium import spaces
+try:
+    import gymnasium as gym
+    from gymnasium import spaces
+except ImportError:
+    class _DummyGymEnv:
+        """Fallback Env class if gymnasium is not installed."""
+        pass
+    class _DummySpaces:
+        """Fallback spaces if gymnasium is not installed."""
+        class Box:
+            def __init__(self, low=0.0, high=1.0, shape=None, dtype=None):
+                self.low = low
+                self.high = high
+                self.shape = shape
+                self.dtype = dtype
+        class Discrete:
+            def __init__(self, n=0):
+                self.n = n
+    gym = type("gym", (), {"Env": _DummyGymEnv})()
+    spaces = _DummySpaces()
 import numpy as np
 
 from environment.channel_model import WirelessChannelModel
