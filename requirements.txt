@@ -1,6 +1,3 @@
-# Lightweight CPU wheels repository for fast cloud deployment (avoids 2.5GB CUDA binaries on Streamlit Cloud)
---extra-index-url https://download.pytorch.org/whl/cpu
-
 # Core Web Dashboard
 streamlit>=1.30.0
 
