@@ -24,60 +24,28 @@ from utils.config import load_config
 from utils.seeding import seed_everything
 
 
-def get_default_config() -> Dict[str, Any]:
-    """Load configuration from config.yaml with fail-safe defaults."""
-    cfg_path = Path("config.yaml")
-    if cfg_path.is_file():
-        try:
-            return load_config(str(cfg_path))
-        except Exception:
-            pass
 
-    return {
-        "project": {"name": "Energy-Aware MARL O-RAN", "random_seed": 42},
-        "oran": {
-            "num_prbs_total": 100,
-            "subcarrier_spacing_khz": 30,
-            "carrier_frequency_ghz": 3.5,
-            "channel_bandwidth_mhz": 40.0,
-            "noise_power_spectral_density_dbm_hz": -174.0,
-            "tx_power_dbm": 43.0,
-            "min_prb_per_slice": 5,
-        },
-        "traffic": {
-            "embb": {"mean_demand_mbps": 65.0, "burst_probability": 0.20, "burst_multiplier": 1.6},
-            "urllc": {"mean_demand_mbps": 12.0, "burst_probability": 0.25, "burst_multiplier": 2.2},
-            "mmtc": {"base_devices": 10000, "active_ratio": 0.08, "packet_size_bytes": 128},
-        },
-        "energy": {
-            "p_base": 180.0,
-            "p_rf_active": 360.0,
-            "p_rf_light_sleep": 120.0,
-            "p_rf_deep_sleep": 24.0,
-            "p_xapp_active": 45.0,
-            "p_xapp_light_sleep": 15.0,
-            "p_xapp_deep_sleep": 3.0,
-            "wake_penalty_light_joules": 18.0,
-            "wake_penalty_deep_joules": 65.0,
-        },
-        "sla": {"urllc_latency_target_ms": 5.0, "embb_min_throughput_mbps": 50.0},
-        "training": {
-            "episodes": 250,
-            "steps_per_episode": 100,
-            "lr_actor": 0.0003,
-            "lr_critic": 0.001,
-            "gamma": 0.99,
-            "gae_lambda": 0.95,
-            "clip_ratio": 0.2,
-            "ppo_epochs": 4,
-            "batch_size": 32,
-        },
-        "baselines": {
-            "eval_seeds": [42, 101, 2024, 777, 999],
-            "static_prbs": {"embb": 50, "urllc": 30, "mmtc": 20},
-        },
-        "paths": {"checkpoints_dir": "./checkpoints", "results_dir": "./results"},
-    }
+def get_default_config() -> Dict[str, Any]:
+    """Load configuration from config.yaml."""
+    cfg_path = Path(__file__).resolve().parent / "config.yaml"
+
+    if not cfg_path.is_file():
+        raise FileNotFoundError(
+            f"Configuration file not found: {cfg_path}"
+        )
+
+    config = load_config(str(cfg_path))
+
+    required = ["simulation", "traffic", "sla", "energy", "channel", "training"]
+    missing = [key for key in required if key not in config]
+
+    if missing:
+        raise ValueError(
+            f"config.yaml is missing required sections: {missing}"
+        )
+
+    return config
+
 
 
 def init_session_state(config: Dict[str, Any]):
@@ -117,10 +85,24 @@ def render_dashboard():
     st.sidebar.divider()
 
     st.sidebar.subheader("System Constants")
-    st.sidebar.metric("Total PRB Budget", f"{config['oran']['num_prbs_total']} PRBs")
-    st.sidebar.metric("Subcarrier Spacing", f"{config['oran']['subcarrier_spacing_khz']} kHz")
-    st.sidebar.metric("URLLC SLA Limit", f"{config['sla']['urllc_latency_target_ms']} ms")
-    st.sidebar.metric("Base Station P_base", f"{config['energy']['p_base']} W")
+    
+    st.sidebar.metric(
+        "Total PRB Budget",
+        f"{config['simulation']['total_prbs']} PRBs"
+    )
+    st.sidebar.metric(
+        "Channel Bandwidth",
+        f"{config['channel']['bandwidth_mhz']} MHz"
+    )
+    st.sidebar.metric(
+        "URLLC SLA Limit",
+        f"{config['sla']['urllc']['max_latency_ms']} ms"
+    )
+    st.sidebar.metric(
+        "Base Station P_base",
+        f"{config['energy']['p_base_watts']} W"
+    )
+
 
     st.sidebar.divider()
     st.sidebar.markdown(
